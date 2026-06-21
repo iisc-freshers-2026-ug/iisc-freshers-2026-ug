@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const body = document.body;
     const icon = themeToggle.querySelector('i');
 
+    // Theme setup
     const savedTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -22,6 +23,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Dynamic background blur on scroll
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            document.body.classList.add('scrolled');
+        } else {
+            document.body.classList.remove('scrolled');
+        }
+    });
+
+    // Fade-up Animations
     const observerOptions = {
         root: null,
         rootMargin: '0px',
@@ -42,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
         observer.observe(el);
     });
 
+    // FAQ Dropdowns
     const faqHeaders = document.querySelectorAll('.faq-header');
     faqHeaders.forEach(header => {
         header.addEventListener('click', () => {
