@@ -4,13 +4,57 @@ document.addEventListener("DOMContentLoaded", () => {
     const icon = themeToggle.querySelector('i');
 
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) body.classList.add(savedTheme);
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme === 'light' || (!savedTheme && !systemPrefersDark)) {
+        body.classList.add('light-theme');
+        icon.classList.replace('fa-moon', 'fa-sun');
+    }
 
     themeToggle.addEventListener('click', () => {
         body.classList.toggle('light-theme');
-        const isLight = body.classList.contains('light-theme');
-        localStorage.setItem('theme', isLight ? 'light-theme' : '');
-        icon.classList.toggle('fa-sun', isLight);
-        icon.classList.toggle('fa-moon', !isLight);
+        if (body.classList.contains('light-theme')) {
+            localStorage.setItem('theme', 'light');
+            icon.classList.replace('fa-moon', 'fa-sun');
+        } else {
+            localStorage.setItem('theme', 'dark');
+            icon.classList.replace('fa-sun', 'fa-moon');
+        }
+    });
+
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    const fadeElements = document.querySelectorAll('.fade-up');
+    fadeElements.forEach(el => {
+        observer.observe(el);
+    });
+
+    const faqHeaders = document.querySelectorAll('.faq-header');
+    faqHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const item = header.parentElement;
+            const isActive = item.classList.contains('active');
+            
+            document.querySelectorAll('.faq-item').forEach(faq => {
+                faq.classList.remove('active');
+            });
+
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        });
     });
 });
